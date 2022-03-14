@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>事件处理</title>
+  <script src="../../../node_modules/vue/dist/vue.global.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+  <a href="https://v3.cn.vuejs.org/guide/events.html">事件处理</a>
+  <hr/>
+
+  <p>监听事件</p>
+  <div id="basic-event" class="demo">
+    <button @click="counter += 1">Add 1</button>
+    <p>The button above has been clicked {{ counter }} times.</p>
+  </div>
+  <script>
+    const vmApp1 = Vue.createApp({
+      data() {
+        return {
+          counter: 0
+        }
+      }
+    }).mount('#basic-event')
+  </script>
+  <hr>
+
+
+  <p>事件处理方法</p>
+  <div id="event-with-method" class="demo">
+    <!-- `greet` 是在下面定义的方法名 -->
+    <button @click="greet">Greet</button>
+  </div>
+  <script>
+    const vmApp2 = Vue.createApp({
+      data() {
+        return {
+          name: 'Vue.js'
+        }
+      },
+      methods: {
+        greet(event) {
+          // `methods` 内部的 `this` 指向当前活动实例
+          alert('Hello ' + this.name + '!')
+          // `event` 是原生 DOM event
+          if (event) {
+            alert(event.target.tagName)
+          }
+        }
+      }
+    }).mount('#event-with-method')
+  </script>
+  <hr>
+
+
+  <p>内联处理器中的方法</p>
+  <div id="inline-handler" class="demo">
+    <button @click="say('hi')">Say hi</button>
+    <button @click="say('what')">Say what</button>
+  </div>
+  <script>
+    const vmApp3 = Vue.createApp({
+      methods: {
+        say(message) {
+          alert(message)
+        }
+      }
+    }).mount('#inline-handler')
+  </script>
+  <hr>
+
+
+  <p>有时也需要在内联语句处理器中访问原始的 DOM 事件。可以用特殊变量 $event 把它传入方法：</p>
+  <div id="app4" class="demo">
+    <button @click="warn('Form cannot be submitted yet.', $event)">
+      Submit
+    </button>
+  </div>
+  <script>
+    const vmApp4 = Vue.createApp({
+      methods: {
+        warn(message, event) {
+          // 现在可以访问到原生事件
+          if (event) {
+            event.preventDefault()
+          }
+          alert(message)
+        }
+      }
+    }).mount('#app4')
+  </script>
+  <hr>
+
+
+  <p>多事件处理器</p>
+  <p>事件处理程序中可以有多个方法，这些方法由逗号运算符分隔：</p>
+  <div id="app5" class="demo">
+    <!-- 这两个 one() 和 two() 将执行按钮点击事件 -->
+    <button @click="one($event), two($event)">
+      Submit
+    </button>
+  </div>
+  <script>
+    const vmApp5 = Vue.createApp({
+      methods: {
+        one(event) {
+          // 第一个事件处理器逻辑...
+          alert("1")
+        },
+        two(event) {
+          // 第二个事件处理器逻辑...
+          alert("2")
+        }
+      }
+    }).mount('#app5')
+  </script>
+
+</body>
+
+<style>
+  .demo {
+    font-family: sans-serif;
+    border: 1px solid #eee;
+    border-radius: 2px;
+    padding: 20px 30px;
+    margin-top: 1em;
+    margin-bottom: 40px;
+    user-select: none;
+    overflow-x: auto;
+  }
+</style>
+</html>

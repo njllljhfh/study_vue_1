@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>渲染函数</title>
+  <script src="../../../../node_modules/vue/dist/vue.global.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+  <a href="https://v3.cn.vuejs.org/guide/render-function.html#%E5%AE%8C%E6%95%B4%E5%AE%9E%E4%BE%8B">渲染函数</a>
+  <hr/>
+
+  <div id="app1">
+    <anchored-heading :level="1">Hello world!</anchored-heading>
+  </div>
+
+  <script>
+    const { createApp, h } = Vue
+
+    const app = createApp({})
+
+    /** 递归地从子节点获取文本 */
+    function getChildrenTextContent(children) {
+      console.log('children =', children)
+      return children
+        .map(node => {
+          return typeof node.children === 'string'
+            ? node.children
+            : Array.isArray(node.children)
+              ? getChildrenTextContent(node.children)
+              : ''
+        })
+        .join('')
+    }
+
+    app.component('anchored-heading', {
+      render() {
+        // 从 children 的文本内容中创建短横线分隔 (kebab-case) id。
+        const headingId = getChildrenTextContent(this.$slots.default())  // this.$slots.default()是一个数组
+          .toLowerCase()
+          .replace(/\W+/g, '-') // 用短横线替换非单词字符
+          .replace(/(^-|-$)/g, '') // 删除前后短横线
+
+        return h('h' + this.level, [
+          h(
+            'a',
+            {
+              name: headingId,
+              href: '#' + headingId
+            },
+            this.$slots.default()
+          )
+        ])
+      },
+      props: {
+        level: {
+          type: Number,
+          required: true
+        }
+      }
+    })
+
+    app.mount("#app1")
+  </script>
+</body>
+
+
+<style>
+
+</style>
+</html>
+
+

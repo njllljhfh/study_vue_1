@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>自定义事件</title>
+  <script src="../../../node_modules/vue/dist/vue.global.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+  <a href="https://v3.cn.vuejs.org/guide/component-custom-events.html">自定义事件</a>
+  <hr>
+
+  <h1>多个 v-model 绑定</h1>
+  <div id="v-model-example" class="demo">
+    <p>First name: {{ firstName }}</p>
+    <p>Last name: {{ lastName }}</p>
+    <user-name
+      v-model:first-name="firstName"
+      v-model:last-name="lastName"
+    ></user-name>
+  </div>
+  <script>
+    // 定义组件
+    const UserName = {
+      props: {
+        firstName: String,
+        lastName: String
+      },
+      template: `
+        <input
+            type="text"
+            :value="firstName"
+            @input="$emit('update:firstName', $event.target.value)">
+        <br>
+        <input
+            type="text"
+            :value="lastName"
+            @input="$emit('update:lastName', $event.target.value)">
+      `
+    };
+
+    const HelloVueApp = {
+      // 局部注册组件
+      components: {
+        UserName,
+      },
+      data() {
+        return {
+          firstName: 'John',
+          lastName: 'Doe',
+        };
+      },
+    };
+
+    const vm1 = Vue.createApp(HelloVueApp).mount('#v-model-example')
+  </script>
+  <hr>
+
+
+  <h1>处理 v-model 修饰符</h1>
+  <!--自定义修饰符 capitalize-->
+  <div id="app">
+    <my-component v-model.capitalize="myText"></my-component>
+    {{ myText }}
+  </div>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          myText: ''
+        }
+      }
+    })
+
+    // 添加到组件 v-model 的修饰符将通过 modelModifiers prop 提供给组件。
+    app.component('my-component', {
+      props: {
+        modelValue: String,
+        modelModifiers: {
+          default: () => ({})
+        }
+      },
+      emits: ['update:modelValue'],
+      methods: {
+        emitValue(e) {
+          let value = e.target.value
+          if (this.modelModifiers.capitalize) {
+            value = value.charAt(0).toUpperCase() + value.slice(1)
+          }
+          this.$emit('update:modelValue', value)
+        }
+      },
+      template: `
+        <input
+            type="text"
+            :value="modelValue"
+            @input="emitValue">
+      `,
+      created() {
+        console.log(this.modelModifiers) // { capitalize: true }
+      }
+    })
+
+    app.mount('#app')
+  </script>
+  <hr>
+
+
+  <h1>对于带参数的 v-model 绑定，生成的 prop 名称将为 arg + "Modifiers"：</h1>
+  <div id="app2">
+    <!--<my-component v-model:description="myText2"></my-component>-->
+    <my-component v-model:description.capitalize="myText2"></my-component>
+    {{ myText2 }}
+  </div>
+  <script>
+    const app2 = Vue.createApp({
+      data() {
+        return {
+          myText2: ''
+        }
+      }
+    })
+
+    // 添加到组件 v-model 的修饰符将通过 modelModifiers prop 提供给组件。
+    app2.component('my-component', {
+      props: {
+        description: String,
+        descriptionModifiers: {
+          default: () => ({})
+        }
+      },
+      emits: ['update:description'],
+      methods: {
+        emitValue(e) {
+          let value = e.target.value
+          if (this.descriptionModifiers.capitalize) {
+            value = value.charAt(0).toUpperCase() + value.slice(1)
+          }
+          this.$emit('update:description', value)
+        }
+      },
+      template: `
+        <input
+            type="text"
+            :value="description"
+            @input="emitValue">
+      `,
+      created() {
+        console.log(this.descriptionModifiers) // { capitalize: true }
+      }
+    })
+
+    app2.mount('#app2')
+  </script>
+  <hr>
+
+
+  <!--<script>-->
+  <!--  var a = 99;            // 全局变量a-->
+  <!--  f();                   // f是函数，虽然定义在调用的后面，但是函数声明会提升到作用域的顶部。-->
+  <!--  console.log(a);        // a=>99,  此时是全局变量的a-->
+  <!--  function f() {-->
+  <!--    console.log(a);      // 当前的a变量是下面变量a声明提升后，默认值undefined-->
+  <!--    var a = 10;-->
+  <!--    console.log(a);      // a => 10-->
+  <!--  }-->
+  <!--</script>-->
+
+</body>
+<style>
+    .demo {
+        font-family: sans-serif;
+        border: 1px solid #eee;
+        border-radius: 2px;
+        padding: 20px 30px;
+        margin-top: 1em;
+        margin-bottom: 40px;
+        user-select: none;
+        overflow-x: auto;
+    }
+</style>
+</html>

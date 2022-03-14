@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>自定义指令</title>
+  <script src="../../../node_modules/vue/dist/vue.global.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+  <a href="https://v3.cn.vuejs.org/guide/custom-directive.html">自定义指令</a>
+  <hr/>
+
+  <div id="dynamic-arguments-example">
+    <h3>Scroll down inside this section ↓</h3>
+    <input type="range" min="0" max="500" v-model="pinPadding">
+    <p v-pin:[direction]="pinPadding">Stick me {{ pinPadding + 'px' }} from the {{ direction || 'top' }} of the page</p>
+    <p v-for="item in v_ls">{{ item }}</p>
+  </div>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          direction: 'right',
+          pinPadding: 200,
+        }
+      },
+      computed: {
+        v_ls: {
+          get() {
+            let arr1 = new Array(30);
+            for (let i = 0; i < arr1.length; i++) {
+              arr1[i] = i;
+            }
+            return arr1;
+          }
+        }
+      }
+    })
+
+    app.directive('pin', {
+      mounted(el, binding) {
+        el.style.position = 'fixed'
+        // binding.arg 是我们传递给指令的参数
+        const s = binding.arg || 'top'
+        el.style[s] = binding.value + 'px'
+      },
+      // 让我们扩展指令逻辑以在组件更新后重新计算固定的距离。
+      updated(el, binding) {
+        const s = binding.arg || 'top'
+        el.style[s] = binding.value + 'px'
+      }
+    })
+
+
+    /*
+      函数简写
+      在前面的例子中，你可能想在 mounted 和 updated 时触发相同行为，而不关心其他的钩子函数。
+      那么你可以通过将这个回调函数传递给指令来实现：
+    */
+    // app.directive('pin', (el, binding) => {
+    //   el.style.position = 'fixed'
+    //   const s = binding.arg || 'top'
+    //   el.style[s] = binding.value + 'px'
+    // })
+
+    app.mount('#dynamic-arguments-example')
+  </script>
+
+</body>
+
+<style>
+  .demo {
+    font-family: sans-serif;
+    border: 1px solid #eee;
+    border-radius: 2px;
+    padding: 20px 30px;
+    margin-top: 1em;
+    margin-bottom: 40px;
+    user-select: none;
+    overflow-x: auto;
+  }
+</style>
+</html>
+
+

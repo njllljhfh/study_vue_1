@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>模板引用</title>
+  <script src="../../../node_modules/vue/dist/vue.global.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+  <a href="https://v3.cn.vuejs.org/guide/component-template-refs.html">模板引用</a>
+  <hr>
+
+  <h1>模板引用</h1>
+  <p>例如，你希望在组件挂载时，以编程的方式 focus 到这个 input 上，这可能有用：</p>
+  <div id="app1">
+    <label for="a">焦点未在输入框中: </label>
+    <input type="text" value="123" id="a">
+    <br>
+    <label>焦点在此输入框中: </label>
+    <base-input></base-input>
+  </div>
+  <script>
+    const app1 = Vue.createApp({})
+
+    app1.component('base-input', {
+      template: `
+        <input ref="input"/>
+      `,
+      methods: {
+        focusInput() {
+          console.log('执行focusInput')
+          this.$refs.input.focus()
+        }
+      },
+      mounted() {
+        this.focusInput()
+      }
+    })
+    app1.mount('#app1')
+  </script>
+  <hr>
+
+
+  <p>此外，还可以向组件本身添加另一个 ref，并使用它从父组件触发 focusInput 事件：</p>
+  <div id="app2">
+    <label for="a2">焦点未在输入框中: </label>
+    <input type="text" value="123" id="a2">
+    <br>
+    <label>焦点在此输入框中: </label>
+    <base-input ref="usernameInput"></base-input>
+  </div>
+  <script>
+    const app2 = Vue.createApp({
+      methods: {
+        focusSubComponentInput() {
+          console.log('父组件调用子组件的 focusInput')
+          this.$refs.usernameInput.focusInput()
+        }
+      },
+      mounted() {
+        this.focusSubComponentInput()
+      }
+    })
+
+    app2.component('base-input', {
+      template: `
+        <input ref="input"/>
+      `,
+      methods: {
+        focusInput() {
+          console.log('执行focusInput')
+          this.$refs.input.focus()
+        }
+      }
+    })
+    app2.mount('#app2')
+  </script>
+  <hr>
+
+  <!--
+  WARNING
+  $refs 只会在组件渲染完成之后生效。这仅作为一个用于直接操作子元素的“逃生舱(escape hatch)”——你应该避免在模板或计算属性中访问 $refs。
+  -->
+
+</body>
+<style>
+    .demo {
+        font-family: sans-serif;
+        border: 1px solid #eee;
+        border-radius: 2px;
+        padding: 20px 30px;
+        margin-top: 1em;
+        margin-bottom: 40px;
+        user-select: none;
+        overflow-x: auto;
+    }
+</style>
+</html>

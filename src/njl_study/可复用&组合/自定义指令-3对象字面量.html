@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>自定义指令</title>
+  <script src="../../../node_modules/vue/dist/vue.global.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+  <a href="https://v3.cn.vuejs.org/guide/custom-directive.html">自定义指令</a>
+  <hr/>
+
+  <h1>对象字面量</h1>
+  <div id="app1">
+    <div v-demo="{ color: 'white', text: 'hello!' }">
+      如果指令需要多个值，可以传入一个 JavaScript 对象字面量。记住，指令函数能够接受所有合法的 JavaScript 表达式。
+    </div>
+  </div>
+  <script>
+    app1 = Vue.createApp({})
+    app1.directive('demo', (el, binding) => {
+      console.log(binding.value.color) // => "white"
+      console.log(binding.value.text) // => "hello!"
+    })
+    app1.mount("#app1")
+  </script>
+
+
+</body>
+
+<style>
+  .demo {
+    font-family: sans-serif;
+    border: 1px solid #eee;
+    border-radius: 2px;
+    padding: 20px 30px;
+    margin-top: 1em;
+    margin-bottom: 40px;
+    user-select: none;
+    overflow-x: auto;
+  }
+</style>
+</html>
+
+

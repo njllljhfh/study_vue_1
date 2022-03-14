@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Teleport</title>
+  <script src="../../../node_modules/vue/dist/vue.global.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+  <div id="modals">
+  </div>
+  <div id="x1">
+    <modal-button></modal-button>
+  </div>
+</body>
+
+<script>
+  const app = Vue.createApp({});
+
+  app.component('modal-button', {
+    template: `
+      <teleport to="#modals">
+      <div>A</div>
+      </teleport>
+      <teleport to="#modals">
+      <div>B</div>
+      </teleport>
+    `
+  })
+
+  app.mount('#x1')
+</script>
+
+
+<style>
+  .modal {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, .5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    width: 300px;
+    height: 300px;
+    padding: 5px;
+  }
+</style>
+</html>
+
+

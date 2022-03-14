@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>过渡 & 动画概述</title>
+  <script src="../../../node_modules/vue/dist/vue.global.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+  <a href="https://v3.cn.vuejs.org/guide/transitions-overview.html">过渡 & 动画概述</a>
+  <hr>
+
+  <h1>过渡与 Style 绑定</h1>
+  <div id="demo">
+    <div @mousemove="xCoordinate"
+         :style="{ backgroundColor: `hsl(${x}, 80%, 50%)` }"
+         class="movearea">
+      <h3>Move your mouse across the screen...</h3>
+      <p>x: {{ x }}</p>
+    </div>
+  </div>
+  <script>
+    const Demo = {
+      data() {
+        return {
+          x: 0
+        }
+      },
+      methods: {
+        xCoordinate(e) {
+          this.x = e.clientX;
+        }
+      }
+    }
+
+    Vue.createApp(Demo).mount('#demo')
+  </script>
+</body>
+<style>
+    #demo {
+        width: 100vw;
+        height: 100vh;
+    }
+
+    .movearea {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        padding: 6vmin;
+        transition: 0.2s background-color ease;
+    }
+</style>
+</html>

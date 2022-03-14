@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Provide / Inject</title>
+  <script src="../../../node_modules/vue/dist/vue.global.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+  <a href="https://v3.cn.vuejs.org/guide/component-provide-inject.html">Provide / Inject</a>
+  <hr>
+
+  <h1>Provide / Inject</h1>
+  <!--
+  例如，我们有这样的层次结构：
+  Root
+  └─ TodoList
+     ├─ TodoItem
+     └─ TodoListFooter
+        ├─ ClearTodosButton
+        └─ TodoListStatistics
+  -->
+  <!--
+  实际上，你可以将依赖注入看作是“长距离的 prop”，除了：
+  ● 父组件不需要知道哪些子组件使用了它 provide 的 property
+  ● 子组件不需要知道 inject 的 property 来自哪里
+  -->
+  <div id="app1">
+    <todo-list>
+      <p>123</p>
+      <todo-list-statistics>statistics: 456</todo-list-statistics>
+    </todo-list>
+  </div>
+  <script>
+    const app1 = Vue.createApp({})
+
+    app1.component('todo-list', {
+      data() {
+        return {
+          todos: ['Feed a cat', 'Buy tickets']
+        }
+      },
+      provide: {
+        user: 'John Doe'
+      },
+      template: `
+        <slot></slot>
+        <div>{{ todos.length }}</div>
+      `
+    })
+
+    app1.component('todo-list-statistics', {
+      inject: ['user'],
+      created() {
+        console.log(`Injected property: ${this.user}`) // > 注入的 property: John Doe
+      },
+      template: `
+        <slot></slot>
+        <p>statistics: {{this.user}}</p>
+      `
+    })
+    app1.mount("#app1")
+  </script>
+  <hr>
+
+
+  <h1>要访问组件实例 property，我们需要将 provide 转换为返回对象的函数：</h1>
+  <div id="app2">
+    <todo-list>
+      <p>111</p>
+      <todo-list-statistics>statistics: 666</todo-list-statistics>
+    </todo-list>
+  </div>
+  <script>
+    const app2 = Vue.createApp({})
+
+    app2.component('todo-list', {
+      data() {
+        return {
+          todos: ['Feed a cat', 'Buy tickets']
+        }
+      },
+      provide() {
+        return {
+          todoLength: this.todos.length
+        }
+      },
+      methods:{
+        clickedEvent(){
+          this.todos.push('1')
+        }
+      },
+      template: `
+        <slot></slot>
+        <button @click="clickedEvent">添加todo</button>
+        <div>{{ todos.length }}</div>
+      `
+    })
+
+    app2.component('todo-list-statistics', {
+      inject: ['todoLength'],
+      created() {
+        console.log(`Injected property: ${this.todoLength}`) // > 注入的 property: John Doe
+      },
+      template: `
+        <slot></slot>
+        <p>statistics: {{todoLength}}</p>
+      `
+    })
+    const vm2 = app2.mount("#app2")
+  </script>
+  <hr>
+
+
+  <h1>处理响应性</h1>
+  <!--
+  在上面的例子中，如果我们更改了 todos 的列表，这个变化并不会反映在 inject 的 todoLength property 中。
+  这是因为默认情况下，provide/inject 绑定并不是响应式的。
+  我们可以通过传递一个 ref property 或 reactive 对象给 provide 来改变这种行为。
+  在我们的例子中，如果我们想对祖先组件中的更改做出响应，我们需要为 provide 的 todoLength 分配一个组合式 API computed property：
+  -->
+  <div id="app3">
+    <todo-list>
+      <p>111</p>
+      <todo-list-statistics>statistics: 666</todo-list-statistics>
+    </todo-list>
+  </div>
+  <script>
+    const app3 = Vue.createApp({})
+
+    app3.component('todo-list', {
+      data() {
+        return {
+          todos: ['Feed a cat', 'Buy tickets']
+        }
+      },
+      provide() {
+        return {
+          todoLength: Vue.computed(() => this.todos.length)
+        }
+      },
+      methods:{
+        clickedEvent(){
+          this.todos.push('1')
+        }
+      },
+      template: `
+        <slot></slot>
+        <button @click="clickedEvent">添加todo</button>
+        <div>{{ todos.length }}</div>
+      `
+    })
+
+    app3.component('todo-list-statistics', {
+      inject: ['todoLength'],
+      created() {
+        console.log(`Injected property: ${this.todoLength.value}`) // > 注入的 property: John Doe
+      },
+      template: `
+        <slot></slot>
+        <p>statistics: {{todoLength.value}}</p>
+      `
+    })
+    app3.mount("#app3")
+  </script>
+  <hr>
+
+
+</body>
+<style>
+    .demo {
+        font-family: sans-serif;
+        border: 1px solid #eee;
+        border-radius: 2px;
+        padding: 20px 30px;
+        margin-top: 1em;
+        margin-bottom: 40px;
+        user-select: none;
+        overflow-x: auto;
+    }
+</style>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>条件与循环</title>
+  <script src="../../../node_modules/vue/dist/vue.global.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+  <a href="https://v3.cn.vuejs.org/guide/introduction.html#%E6%9D%A1%E4%BB%B6%E4%B8%8E%E5%BE%AA%E7%8E%AF">条件与循环</a>
+  <hr/>
+
+  <div>
+    <p>控制切换一个元素是否显示也相当简单：</p>
+
+    <div id="conditional-rendering" class="demo">
+      <span v-if="seen">Now you see me</span>
+    </div>
+
+    <script>
+      const ConditionalRenderingApp = {
+        data() {
+          return {
+            seen: true
+          }
+        }
+      }
+
+      const mountedConditionalRenderingApp = Vue.createApp(ConditionalRenderingApp).mount('#conditional-rendering')
+    </script>
+  </div>
+  <hr/>
+
+
+  <p>还有其它很多指令，每个都有特殊的功能。例如，v-for 指令可以绑定数组的数据来渲染一个项目列表：</p>
+  <div>
+    <div id="list-rendering" class="demo">
+      <ol>
+        <li v-for="todo in todos">
+          {{ todo.text }}
+        </li>
+      </ol>
+    </div>
+    <script>
+      const ListRenderingApp = {
+        data() {
+          return {
+            todos: [
+              {text: 'Learn JavaScript'},
+              {text: 'Learn Vue'},
+              {text: 'Build something awesome'}
+            ]
+          }
+        }
+      }
+
+      Vue.createApp(ListRenderingApp).mount('#list-rendering')
+    </script>
+  </div>
+
+
+</body>
+
+<style>
+  .demo {
+    font-family: sans-serif;
+    border: 1px solid #eee;
+    border-radius: 2px;
+    padding: 20px 30px;
+    margin-top: 1em;
+    margin-bottom: 40px;
+    user-select: none;
+    overflow-x: auto;
+  }
+</style>
+</html>
+
+

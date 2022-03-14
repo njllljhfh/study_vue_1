@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>条件渲染</title>
+  <script src="../../../node_modules/vue/dist/vue.global.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+  <a href="https://v3.cn.vuejs.org/guide/conditional.html#v-if">条件渲染</a>
+  <hr/>
+
+  <div id="app1">
+    <h1 v-if="awesome">Vue is awesome!</h1>
+    <h1 v-else>Oh no 😢</h1>
+  </div>
+  <script>
+    const app1 = Vue.createApp({
+      data() {
+        return {
+          awesome: true
+        }
+      }
+    })
+    app1.mount("#app1")
+  </script>
+  <hr>
+
+
+  <p>在 template 元素上使用 v-if 条件渲染分组。最终的渲染结果将不包含 template 元素。</p>
+  <div id="app2">
+    <template v-if="ok">
+      <h1>Title</h1>
+      <p>Paragraph 1</p>
+      <p>Paragraph 2</p>
+    </template>
+  </div>
+  <script>
+    const app2 = Vue.createApp({
+      data() {
+        return {
+          ok: true
+        }
+      }
+    })
+    const vmApp2 = app2.mount("#app2")
+  </script>
+  <hr>
+
+
+  <p>v-else-if 和 v-else</p>
+  <div id="app3">
+    <div v-if="type === 'A'">
+      A
+    </div>
+    <div v-else-if="type === 'B'">
+      B
+    </div>
+    <div v-else-if="type === 'C'">
+      C
+    </div>
+    <div v-else>
+      Not A/B/C
+    </div>
+  </div>
+  <script>
+    const app3 = Vue.createApp({
+      data() {
+        return {
+          type: 'B'
+        }
+      }
+    })
+    const vmApp3 = app3.mount("#app3")
+  </script>
+  <hr>
+
+
+  <p>v-show</p>
+  <div id="app4">
+    <h1 v-show="ok">Hello!</h1>
+  </div>
+  <script>
+    const app4 = Vue.createApp({
+      data() {
+        return {
+          ok: true
+        }
+      }
+    })
+    const vmApp4 = app4.mount("#app4")
+  </script>
+
+</body>
+</html>

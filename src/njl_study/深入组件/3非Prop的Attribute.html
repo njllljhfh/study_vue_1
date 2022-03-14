@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>非 Prop 的 Attribute</title>
+  <script src="../../../node_modules/vue/dist/vue.global.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+  <a href="https://v3.cn.vuejs.org/guide/component-attrs.html">非 Prop 的 Attribute</a>
+  <hr>
+
+  <h1>Attribute 继承</h1>
+  <div id="app1">
+    <!-- 如果我们需要通过 data-status attribute 定义 <date-picker> 组件的状态，它将应用于根节点 (即 div.date-picker)。-->
+    <!-- 具有非 prop 的 attribute 的 date-picker 组件-->
+    <!-- 渲染后的 date-picker 组件 -->
+    <!--
+      <div class="date-picker" data-status="activated">
+        <input type="datetime-local" />
+      </div>
+    -->
+    <date-picker data-status="activated"></date-picker>
+  </div>
+  <script>
+    const app1 = Vue.createApp({})
+
+    app1.component('date-picker', {
+      template: `
+        <div class="date-picker">
+          <input type="datetime-local" />
+        </div>
+      `
+    })
+
+    const vm1 = app1.mount("#app1")
+  </script>
+  <hr>
+
+
+  <p>同样的规则也适用于事件监听器：</p>
+  <div id="app2">
+    <date-picker-2 @change="showChange"></date-picker-2>
+  </div>
+  <script>
+    const app2 = Vue.createApp({
+      methods: {
+        showChange(event) {
+          console.log(event.target.value) // 将打印所选选项的值
+        }
+      }
+    })
+
+    app2.component('date-picker-2', {
+      created() {
+        console.log(this.$attrs) // onChange
+      },
+      // 当一个具有 change 事件的 HTML 元素作为 date-picker-2 的根元素时，这可能会有帮助。
+      template: `
+        <select>
+          <option value="1">Yesterday</option>
+          <option value="2">Today</option>
+          <option value="3">Tomorrow</option>
+        </select>
+      `
+    })
+
+    const vm2 = app2.mount("#app2")
+  </script>
+  <hr>
+
+
+  <h1>禁用 Attribute 继承</h1>
+  <p>如果你不希望组件的根元素继承 attribute，可以在组件的选项中设置 inheritAttrs: false。</p>
+  <p>禁用 attribute 继承的常见场景是需要将 attribute 应用于根节点之外的其他元素。</p>
+  <p>
+    通过将 inheritAttrs 选项设置为 false，你可以使用组件的 $attrs property 将 attribute 应用到其它元素上，
+    组件的 $attrs property 包括组件 props 和 emits property 中未包含的所有属性 (例如，class、style、v-on 监听器等)。
+  </p>
+  <p>
+    使用上一节中的 date-picker 组件示例，如果需要将所有非 prop 的 attribute 应用于 input 元素而不是根 div 元素，
+    可以使用 v-bind 缩写来完成。
+  </p>
+  <div id="app3">
+    <date-picker-3 data-status="activated"></date-picker-3>
+  </div>
+  <script>
+    const app3 = Vue.createApp({})
+    app3.component('date-picker-3', {
+      inheritAttrs: false,
+      template: `
+        <div class="date-picker">
+          <input type="datetime-local" v-bind="$attrs" />
+        </div>
+      `
+    })
+    const vm3 = app3.mount("#app3")
+  </script>
+
+
+  <h1>多个根节点上的 Attribute 继承</h1>
+  <!--
+  与单个根节点组件不同，具有多个根节点的组件不具有自动 attribute fallthrough (隐式贯穿) 行为。
+  如果未显式绑定 $attrs，将发出运行时警告。
+  -->
+</body>
+</html>

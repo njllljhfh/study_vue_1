@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>声明式渲染</title>
+  <script src="../../../node_modules/vue/dist/vue.global.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+  <a href="https://v3.cn.vuejs.org/guide/introduction.html#%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%B8%B2%E6%9F%93">声明式渲染</a>
+  <hr/>
+
+  <div>
+    <p>Vue.js 的核心是一个允许采用简洁的模板语法来声明式地将数据渲染进 DOM 的系统：</p>
+
+    <div id="counter" class="demo">
+      Counter: {{ counter }}
+    </div>
+
+    <script>
+      const Counter = {
+        data() {
+          return {
+            counter: 0
+          }
+        },
+        mounted() {
+          setInterval(() => {  // 箭头函数没有this <https://v3.cn.vuejs.org/guide/instance.html#%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E9%92%A9%E5%AD%90>
+            this.counter++
+          }, 1000)
+        }
+      }
+
+      const mountedCounter = Vue.createApp(Counter).mount('#counter')
+    </script>
+  </div>
+  <hr/>
+
+  <div>
+    <p>除了文本插值，我们还可以像这样绑定元素的 attribute</p>
+
+    <div id="bind-attribute" class="demo">
+      <span v-bind:title="message">
+        鼠标悬停几秒钟查看此处动态绑定的提示信息！
+      </span>
+    </div>
+
+    <script>
+      const AttributeBinding = {
+        data() {
+          return {
+            message: 'You loaded this page on ' + new Date().toLocaleString()
+          }
+        }
+      }
+      const vm = Vue.createApp(AttributeBinding).mount('#bind-attribute')
+    </script>
+  </div>
+  <hr/>
+
+</body>
+
+<style>
+  .demo {
+    font-family: sans-serif;
+    border: 1px solid #eee;
+    border-radius: 2px;
+    padding: 20px 30px;
+    margin-top: 1em;
+    margin-bottom: 40px;
+    user-select: none;
+    overflow-x: auto;
+  }
+</style>
+</html>
+
+

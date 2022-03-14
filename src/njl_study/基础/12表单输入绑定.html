@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>表单输入绑定</title>
+  <script src="../../../node_modules/vue/dist/vue.global.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+  <a href="https://v3.cn.vuejs.org/guide/forms.html">表单输入绑定</a>
+  <hr/>
+
+  <p>文本 (Text)</p>
+  <div id="v-model-basic" class="demo">
+    <input v-model="message" placeholder="edit me"/>
+    <p>Message is: {{ message }}</p>
+  </div>
+  <script>
+    const vmApp1 = Vue.createApp({
+      data() {
+        return {
+          message: ''
+        }
+      }
+    }).mount('#v-model-basic')
+  </script>
+  <hr>
+
+
+  <p>多行文本 (Textarea)</p>
+  <div id="v-model-textarea" class="demo">
+    <span>Multiline message is:</span>
+    <p style="white-space: pre-line;">{{ message }}</p>
+    <br/>
+    <textarea v-model="message" placeholder="add multiple lines"></textarea>
+  </div>
+  <script>
+    const vmApp2 = Vue.createApp({
+      data() {
+        return {
+          message: ''
+        }
+      }
+    }).mount('#v-model-textarea')
+  </script>
+  <hr>
+
+
+  <h1>复选框 (Checkbox)</h1>
+  <p>单个复选框，绑定到布尔值：</p>
+  <div id="v-model-checkbox" class="demo">
+    <input type="checkbox" id="checkbox" v-model="checked"/>
+    <label for="checkbox">{{ checked }}</label>
+  </div>
+  <script>
+    const vmApp3 = Vue.createApp({
+      data() {
+        return {
+          checked: false
+        }
+      }
+    }).mount('#v-model-checkbox')
+  </script>
+  <br/>
+
+  <p>多个复选框，绑定到同一个数组：</p>
+  <!--checkedNames 中保存的是 input 标签中的 value 属性对应的值-->
+  <div id="v-model-multiple-checkboxes" class="demo">
+    <input type="checkbox" id="jack" value="Jack" v-model="checkedNames"/>
+    <label for="jack">a-Jack</label>
+    <input type="checkbox" id="john" value="John" v-model="checkedNames"/>
+    <label for="john">b-John</label>
+    <input type="checkbox" id="mike" value="Mike" v-model="checkedNames"/>
+    <label for="mike">c-Mike</label>
+    <br/>
+    <span>Checked names: {{ checkedNames }}</span>
+  </div>
+  <script>
+    const vmApp4 = Vue.createApp({
+      data() {
+        return {
+          checkedNames: []
+        }
+      }
+    }).mount('#v-model-multiple-checkboxes')
+  </script>
+  <hr>
+
+
+  <p>单选框 (Radio)</p>
+  <!--picked 中保存的是 input 标签中的 value 属性对应的值-->
+  <div id="v-model-radiobutton" class="demo">
+    <input type="radio" id="one" value="One" v-model="picked"/>
+    <label for="one">-One-</label>
+    <br/>
+    <input type="radio" id="two" value="Two" v-model="picked"/>
+    <label for="two">-Two-</label>
+    <br/>
+    <span>Picked: {{ picked }}</span>
+  </div>
+  <script>
+    const vmApp5 = Vue.createApp({
+      data() {
+        return {
+          picked: ''
+        }
+      }
+    }).mount('#v-model-radiobutton')
+  </script>
+  <hr>
+
+
+  <p>选择框 (Select)</p>
+  <p>单选时：</p>
+  <div id="v-model-select" class="demo">
+    <select v-model="selected">
+      <!--
+      如果 v-model 表达式的初始值未能匹配任何选项，<select> 元素将被渲染为“未选中”状态。
+      在 iOS 中，这会使用户无法选择第一个选项。因为这样的情况下，iOS 不会触发 change 事件。
+      因此，更推荐像上面这样提供一个值为空的禁用选项。
+      -->
+      <option disabled value="">Please select one</option>
+      <option>A</option>
+      <option>B</option>
+      <option>C</option>
+    </select>
+    <span>Selected: {{ selected }}</span>
+  </div>
+  <script>
+    const vmApp6 = Vue.createApp({
+      data() {
+        return {
+          selected: ''
+        }
+      }
+    }).mount('#v-model-select')
+  </script>
+  <br>
+
+  <p>多选时 (绑定到一个数组)：</p>
+  <div id="v-model-select-2" class="demo">
+    <select v-model="selected" multiple>
+      <!--option 标签有 value 属性时，selected 保存的是 value 的值，没有 value 属性时 selected 保存的是 option 标签 的文本-->
+      <option value="aaa">A</option>
+      <option>B</option>
+      <option>C</option>
+    </select>
+    <br/>
+    <span>Selected: {{ selected }}</span>
+  </div>
+  <script>
+    const vmApp7 = Vue.createApp({
+      data() {
+        return {
+          selected: []
+        }
+      }
+    }).mount('#v-model-select-2')
+  </script>
+  <br>
+
+  <p>用 v-for 渲染的动态选项：</p>
+  <div id="v-model-select-dynamic" class="demo">
+    <select v-model="selected">
+      <option v-for="option in options" v-bind:value="option.value">
+        {{ option.text }}
+      </option>
+    </select>
+    <span>Selected: {{ selected }}</span>
+  </div>
+  <script>
+    const vmApp8 = Vue.createApp({
+      data() {
+        return {
+          selected: 'A',
+          options: [
+            {text: 'One', value: 'A'},
+            {text: 'Two', value: 'B'},
+            {text: 'Three', value: 'C'}
+          ]
+        }
+      }
+    }).mount('#v-model-select-dynamic')
+  </script>
+  <hr>
+
+
+  <p>值绑定</p>
+  <div id="app9" class="demo">
+    <input type="radio" id="a" v-model="pick" v-bind:value="a"/>
+    <label for="a">A</label>
+    <br>
+    <input type="radio" id="b" v-model="pick" v-bind:value="b"/>
+    <label for="b">B</label>
+    <br/>
+    <span>Picked: {{ pick }}</span>
+  </div>
+  <script>
+    const vmApp9 = Vue.createApp({
+      data() {
+        return {
+          a: 123,
+          b: 456,
+          pick: 456,
+        }
+      }
+    }).mount('#app9')
+  </script>
+  <br>
+
+
+  <p>选择框选项 (Select Options)</p>
+  <div id="app10" class="demo">
+    <select v-model="selected">
+      <option disabled :value="{}">Please select one</option>
+      <option v-for="option in options" :value="option" :key="option.number">{{ option.number }}</option>
+    </select>
+  </div>
+  <script>
+    const vmApp10 = Vue.createApp({
+      data() {
+        return {
+          options: [{number: 1}, {number: 2}],
+          selected: {},
+        }
+      }
+    }).mount("#app10")
+  </script>
+  <hr>
+
+</body>
+
+<style>
+  .demo {
+    font-family: sans-serif;
+    border: 1px solid #eee;
+    border-radius: 2px;
+    padding: 20px 30px;
+    margin-top: 1em;
+    margin-bottom: 40px;
+    user-select: none;
+    overflow-x: auto;
+  }
+</style>
+</html>

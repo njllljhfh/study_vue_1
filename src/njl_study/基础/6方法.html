@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Data Property 和方法</title>
+  <script src="../../../node_modules/vue/dist/vue.global.js" type="text/javascript" charset="utf-8"></script>
+  <script src="https://unpkg.com/lodash@4.17.20/lodash.min.js"></script>
+</head>
+<body>
+  <a href="https://v3.cn.vuejs.org/guide/data-methods.html#data-property">Data Property 和方法</a>
+  <hr/>
+
+  <p>防抖和节流</p>
+  <div id="demo">
+    <p>{{ count }}</p>
+    <save-button :btname="attr1" @click="increment"></save-button>
+  </div>
+
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          attr1: "Save1",
+          count: 4
+        }
+      },
+      // methods: {
+      //   increment() {  // increment方法没有防抖
+      //     // `this` 指向该组件实例
+      //     this.count++
+      //   }
+      // }
+      methods: {
+        // 用 Lodash 的防抖函数
+        increment: _.debounce(function () {
+          // ... 响应点击 ...
+          this.count++
+        }, 500)
+      }
+    })
+
+    const saveButtonComponent = {
+      created() {
+        // 使用 Lodash 实现防抖
+        this.debouncedClick = _.debounce(this.click, 500)
+      },
+      unmounted() {
+        // 移除组件时，取消定时器
+        this.debouncedClick.cancel()
+      },
+      methods: {
+        click() {
+          // ... 响应点击 ...
+          console.log(new Date().toLocaleString())
+        }
+      },
+      props: ["btname"],
+      template: `
+        <button @click="debouncedClick">
+        {{ btname }}
+        </button>
+      `
+    }
+
+    app.component('save-button', saveButtonComponent)
+
+    const vm = app.mount("#demo")
+
+    // app.component('save-button', {
+    //   created() {
+    //     // 使用 Lodash 实现防抖
+    //     this.debouncedClick = _.debounce(this.click, 500)
+    //   },
+    //   unmounted() {
+    //     // 移除组件时，取消定时器
+    //     this.debouncedClick.cancel()
+    //   },
+    //   methods: {
+    //     click() {
+    //       // ... 响应点击 ...
+    //       console.log(new Date().toLocaleString())
+    //     }
+    //   },
+    //   props: ["btname"],
+    //   template: `
+    //     <button @click="debouncedClick">
+    //     {{ btname }}
+    //     </button>
+    //   `
+    // })
+    //
+    // const vm = app.mount("#demo")
+  </script>
+
+</body>
+</html>

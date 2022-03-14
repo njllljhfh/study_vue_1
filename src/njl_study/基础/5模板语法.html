@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>模板语法</title>
+  <script src="../../../node_modules/vue/dist/vue.global.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+  <a
+    href="https://v3.cn.vuejs.org/guide/template-syntax.html#%E6%A8%A1%E6%9D%BF%E8%AF%AD%E6%B3%95">模板语法
+  </a>
+  <hr/>
+
+  <div>
+
+    <p>双大括号会将数据解释为普通文本，而非 HTML 代码。为了输出真正的 HTML，你需要使用v-html 指令：</p>
+    <p>Tip: 在你的站点上动态渲染任意的 HTML 是非常危险的，因为它很容易导致 XSS 攻击。请只对可信内容使用 HTML 插值，绝不要将用户提供的内容作为插值。</p>
+    <div id="example1" class="demo">
+      <p>文本:</p>
+      <p>Using mustaches: {{ rawHtml }}</p>
+      <p>原始 HTML:</p>
+      <p>Using v-html directive: <span v-html="rawHtml"></span></p>
+    </div>
+
+    <script>
+      const RenderHtmlApp = {
+        data() {
+          return {
+            rawHtml: '<span style="color: red">This should be red.</span>'
+          }
+        }
+      }
+
+      Vue.createApp(RenderHtmlApp).mount('#example1')
+    </script>
+  </div>
+  <hr/>
+
+  <div>
+    <p>Attribute</p>
+    <p>Mustache 语法不能在 HTML attribute 中使用，然而，可以使用 v-bind 指令：</p>
+  </div>
+
+</body>
+
+<style>
+  .demo {
+    font-family: sans-serif;
+    border: 1px solid #eee;
+    border-radius: 2px;
+    padding: 20px 30px;
+    margin-top: 1em;
+    margin-bottom: 40px;
+    user-select: none;
+    overflow-x: auto;
+  }
+</style>
+</html>
+
+

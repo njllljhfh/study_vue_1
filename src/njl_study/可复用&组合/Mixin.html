@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mixin</title>
+  <script src="../../../node_modules/vue/dist/vue.global.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+  <a href="https://v3.cn.vuejs.org/guide/mixins.html">Mixin</a>
+  <hr>
+
+  <h1>基础</h1>
+  <div id="mixins-basic">
+    <p>控制台会打印：{{ msg }}</p>
+  </div>
+  <script>
+    // 定义一个 mixin 对象
+    const myMixin = {
+      data() {
+        return {
+          msg: 'hello from mixin!'
+        }
+      },
+      created() {
+        this.hello()
+      },
+      methods: {
+        hello() {
+          console.log(this.msg)
+        }
+      }
+    }
+
+    // 定义一个使用此 mixin 对象的应用
+    const app = Vue.createApp({
+      mixins: [myMixin],
+      // data() {
+      //   return {
+      //     msg: 'hello from app!'
+      //   }
+      // },
+    })
+
+    app.mount('#mixins-basic') // => "hello from mixin!"
+  </script>
+  <hr>
+
+
+  <h1>选项合并</h1>
+  <p>当组件和 mixin 对象含有同名选项时，这些选项将以恰当的方式进行“合并”。</p>
+  <div id="app2">
+    1.比如，每个 mixin 可以拥有自己的 data 函数。每个 data 函数都会被调用，并将返回结果合并。在数据的 property 发生冲突时，会以组件自身的数据为优先。
+  </div>
+  <script>
+    const myMixin2 = {
+      data() {
+        return {
+          message: 'hello',
+          foo: 'abc'
+        }
+      }
+    }
+
+    const app2 = Vue.createApp({
+      mixins: [myMixin2],
+      data() {
+        return {
+          message: 'goodbye',
+          bar: 'def'
+        }
+      },
+      created() {
+        console.log(this.$data) // => { message: "goodbye", foo: "abc", bar: "def" }
+      }
+    })
+
+    const vm2 = app2.mount("#app2")
+  </script>
+  <br>
+
+  <div id="app3">
+    2.同名钩子函数将合并为一个数组，因此都将被调用。另外，mixin 对象的钩子将在组件自身钩子<strong>之前</strong>调用。
+  </div>
+  <script>
+    const myMixin3 = {
+      created() {
+        console.log('mixin 对象的钩子被调用')  // 先被调用
+      }
+    }
+
+    const app3 = Vue.createApp({
+      mixins: [myMixin3],
+      created() {
+        console.log('组件钩子被调用')  // 后被调用
+      }
+    })
+
+    // => "mixin 对象的钩子被调用"
+    // => "组件钩子被调用"
+    const vm3 = app3.mount("#app3")
+  </script>
+  <br>
+
+  <div id="app4">
+    3.值为对象的选项，例如 methods、components 和 directives，将被合并为同一个对象。两个对象键名冲突时，取组件对象的键值对。
+  </div>
+  <script>
+    const myMixin4 = {
+      methods: {
+        foo() {
+          console.log('foo')
+        },
+        conflicting() {
+          console.log('from mixin')
+        }
+      }
+    }
+
+    const app4 = Vue.createApp({
+      mixins: [myMixin4],
+      methods: {
+        bar() {
+          console.log('bar')
+        },
+        conflicting() {
+          console.log('from self')
+        }
+      }
+    })
+
+    const vm4 = app4.mount('#app4')
+
+    vm4.foo() // => "foo"
+    vm4.bar() // => "bar"
+    vm4.conflicting() // => "from self"
+  </script>
+  <hr>
+
+
+  <h1>全局 mixin</h1>
+  <div id="app5">
+    <p>你还可以为 Vue 应用程序全局应用 mixin：</p>
+    <p>Mixin 也可以进行全局注册。使用时格外小心！一旦使用全局 mixin，它将影响每一个之后创建的组件 (例如，每个子组件)。</p>
+  </div>
+  <script>
+    const app5 = Vue.createApp({
+      myOption: 'hello!'
+    })
+
+    // 为自定义的选项 'myOption' 注入一个处理器。
+    app5.mixin({
+      created() {
+        const myOption = this.$options.myOption
+        if (myOption) {
+          console.log(myOption)
+        }
+      }
+    })
+
+    // 将myOption也添加到子组件
+    app5.component('test-component', {
+      myOption: 'hello from component!'
+    })
+
+    const vm5 = app5.mount('#app5')
+
+    // => "hello!"
+    // => "hello from component!"
+  </script>
+  <div>大多数情况下，只应当应用于自定义选项，就像上面示例一样。推荐将其作为 <strong>插件</strong> 发布，以避免重复应用 mixin。</div>
+  <hr>
+
+
+  <h1>自定义选项合并策略</h1>
+  <div id="app6">
+    优先返回 fromVal
+  </div>
+  <script>
+    const app6 = Vue.createApp({
+      custom: '6-hello!'
+    })
+
+    // 合并策略接收在父实例和子实例上定义的该选项的值，分别作为第一个和第二个参数。
+    app6.config.optionMergeStrategies.custom = (toVal, fromVal) => {
+      console.log(fromVal, toVal)
+      // => "6-goodbye!", undefined
+      // => "6-hello", "6-goodbye!"
+      return fromVal || toVal  // 执行结果跟python一样, 如果fromVal的bool值为ture，始终返回fromVal
+      // return 0 || 1 && false
+    }
+
+    app6.mixin({
+      custom: '6-goodbye!',
+      created() {
+        console.log(this.$options.custom) // => "hello!"
+      }
+    })
+    const vm6 = app6.mount("#app6")
+  </script>
+  <br>
+
+  <h1>自定义选项合并策略</h1>
+  <div id="app7">
+    优先返回 toVal
+  </div>
+  <script>
+    const app7 = Vue.createApp({
+      custom: '7-hello!'
+    })
+
+    // (toVal, fromVal) => toVal || fromVal 这部分相当于 python 中的 lambda 函数（匿名函数）
+    app7.config.optionMergeStrategies.custom = (toVal, fromVal) => toVal || fromVal
+
+    app7.mixin({
+      custom: '7-goodbye!',
+      created() {
+        console.log(this.$options.custom) // => "7-goodbye!"
+      }
+    })
+    const vm7 = app7.mount("#app7")
+  </script>
+
+
+</body>
+<style>
+</style>
+</html>

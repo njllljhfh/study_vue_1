@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>组件基础</title>
+  <script src="../../../node_modules/vue/dist/vue.global.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+  <a href="https://v3.cn.vuejs.org/guide/component-basics.html">组件基础</a>
+  <hr/>
+
+
+  <h1>基本示例</h1>
+  <div id="components-demo">
+    <button-counter></button-counter>
+    <hr>
+
+    <p>组件的复用: 你可以将组件进行任意次数的复用：</p>
+    <button-counter></button-counter>
+    <button-counter></button-counter>
+    <button-counter></button-counter>
+    <!--注意当点击按钮时，每个组件都会各自独立维护它的 count。因为你每用一次组件，就会有一个它的新实例被创建。-->
+  </div>
+  <script>
+    // 创建一个Vue 应用
+    const app = Vue.createApp({})
+
+    // 定义一个名为 button-counter 的新全局组件
+    app.component('button-counter', {
+      data() {
+        return {
+          count: 0
+        }
+      },
+      template: `
+        <button @click="count++">
+        You clicked me {{ count }} times.
+        </button>`
+    })
+    app.mount('#components-demo')
+  </script>
+  <hr>
+
+
+  <h1>通过 Prop 向子组件传递数据</h1>
+  <div id="blog-post-demo" class="demo">
+    <blog-post title="My journey with Vue"></blog-post>
+    <blog-post title="Blogging with Vue"></blog-post>
+    <blog-post title="Why Vue is so fun"></blog-post>
+    <!-- 即便 `42` 是静态的，我们仍需通过 `v-bind` 来告诉 Vue     -->
+    <!-- 这是一个 JavaScript 表达式而不是一个字符串。             -->
+    <blog-post :title=42></blog-post>
+  </div>
+  <script>
+    // 这里的app跟上面的app的变量名相同的话，blog-post组件会显示不出来 TODO: 为什么？
+    const app1 = Vue.createApp({})
+
+    app1.component('blog-post', {
+      props: ['title'],
+      template: `<h4>{{ title }}</h4>`
+    })
+
+    app1.mount('#blog-post-demo')
+  </script>
+  <hr>
+
+
+  <p>在一个典型的应用中，你可能在 data 里有一个博文的数组，并想要为每篇博文渲染一个组件：</p>
+  <div id="blog-posts-demo">
+    <blog-post
+      v-for="post in posts"
+      :key="post.id"
+      :title="post.title"
+    ></blog-post>
+  </div>
+  <script>
+    const App2 = {
+      data() {
+        return {
+          posts: [
+            {id: 1, title: 'My journey with Vue'},
+            {id: 2, title: 'Blogging with Vue'},
+            {id: 3, title: 'Why Vue is so fun'}
+          ]
+        }
+      }
+    }
+
+    const app2 = Vue.createApp(App2)
+
+    app2.component('blog-post', {
+      props: ['title'],
+      template: `<h4>{{ title }}</h4>`
+    })
+
+    app2.mount('#blog-posts-demo')
+  </script>
+  <hr>
+
+
+  <h1>监听子组件事件</h1>
+  <p>
+    我们在开发 'blog-pos' 组件时，它的一些功能可能需要与父级组件进行沟通。
+    例如我们可能会引入一个辅助功能来放大博文的字号，同时让页面的其它部分保持默认的字号。
+  </p>
+  <div id="blog-posts-events-demo">
+    <div :style="{ fontSize: postFontSize + 'em' }">
+      <blog-post
+        v-for="post in posts"
+        :key="post.id"
+        :title="post.title"
+        @enlarge-text="postFontSize += 0.1"
+      ></blog-post>
+    </div>
+  </div>
+  <script>
+    const App3 = {
+      data() {
+        return {
+          posts: [
+            {id: 1, title: 'My journey with Vue'},
+            {id: 2, title: 'Blogging with Vue'},
+            {id: 3, title: 'Why Vue is so fun'}
+          ],
+          postFontSize: 1
+        }
+      }
+    }
+
+    const app3 = Vue.createApp(App3)
+
+    app3.component('blog-post', {
+      props: ['title'],
+      emits: ['enlargeText'],
+      template: `
+        <h4>{{ title }}</h4>
+        <button @click="$emit('enlargeText')">
+        Enlarge text
+        </button>
+      `
+    })
+
+    app3.mount('#blog-posts-events-demo')
+  </script>
+  <hr>
+
+
+  <p>使用事件抛出一个值</p>
+  <div id="app4">
+    <div :style="{ fontSize: postFontSize + 'em' }">
+      <blog-post
+        v-for="post in posts"
+        :key="post.id"
+        :title="post.title"
+        @enlarge-text="onEnlargeText"
+      ></blog-post>
+    </div>
+  </div>
+  <script>
+    const App4 = {
+      data() {
+        return {
+          posts: [
+            {id: 1, title: 'My journey with Vue'},
+            {id: 2, title: 'Blogging with Vue'},
+            {id: 3, title: 'Why Vue is so fun'}
+          ],
+          postFontSize: 1
+        }
+      },
+      methods: {
+        onEnlargeText(enlargeAmount) {
+          this.postFontSize += enlargeAmount
+        }
+      }
+    }
+
+    const app4 = Vue.createApp(App4)
+
+    app4.component('blog-post', {
+      data() {
+        return {
+          addSize: 0.1
+        }
+      },
+      props: ['title'],
+      emits: ['enlargeText'],
+      template: `
+        <h4>{{ title }}</h4>
+        <button @click="$emit('enlargeText', addSize)">
+        Enlarge text
+        </button>
+      `
+    })
+
+    app4.mount('#app4')
+  </script>
+  <hr>
+
+
+  <p>在组件上使用 v-model</p>
+  <!--记住-->
+  <!--<input v-model="searchText" />-->
+  <!--等价于：-->
+  <!--<input :value="searchText" @input="searchText = $event.target.value" />-->
+  <div id="app5">
+    <p> {{ searchText }} </p>
+    <!--当用在组件上时，v-model 则会这样：-->
+    <!--<custom-input-->
+    <!--  :model-value="searchText"-->
+    <!--  @update:model-value="searchText = $event"-->
+    <!--&gt;</custom-input>-->
+
+    <custom-input v-model="searchText"></custom-input>
+  </div>
+  <script>
+    const app5 = Vue.createApp({
+      data() {
+        return {
+          searchText: "555",
+        }
+      }
+    })
+
+    const vm5 = app5.component('custom-input', {
+      props: ['modelValue'],
+      // emits: ['update:modelValue'],
+      template: `
+        <input
+            :value="modelValue"
+            @input="$emit('update:modelValue', $event.target.value)"
+        >
+      `
+    }).mount("#app5")
+  </script>
+  <br>
+
+
+  <p>
+    在该组件中实现 v-model 的另一种方法是使用 computed property 的功能来定义 getter 和 setter。
+    get 方法应返回 modelValue property，set 方法应该触发相应的事件。
+  </p>
+  <div id="app6">
+    <p> {{ searchText }} </p>
+    <!--<custom-input-->
+    <!--  :model-value="searchText"-->
+    <!--  @update:model-value="setSearchText"-->
+    <!--&gt;</custom-input>-->
+
+    <custom-input v-model="searchText"></custom-input>
+  </div>
+  <script>
+    app6 = Vue.createApp({
+      data() {
+        return {
+          searchText: "666",
+        }
+      },
+      methods: {
+        setSearchText(text) {
+          this.searchText = text
+        }
+      }
+    })
+    const vm6 = app6.component('custom-input', {
+      props: ['modelValue'],
+      emits: ['update:modelValue'],
+      template: `
+        <input v-model="value">
+      `,
+      computed: {
+        value: {
+          get() {
+            // console.log('value-get')
+            // 注意: 子组件modelValue的值 来自 根组件searchText
+            return this.modelValue
+          },
+          set(value) {
+            // 注意在这个子组件中，并没有用一个 data属性来维护 value的值
+            // 子组件发出 update:modelValue 事件后，根组件中处理该事件修改了searchText的值
+            // console.log('value-set')
+            this.$emit('update:modelValue', value)
+          }
+        }
+      }
+    }).mount("#app6")
+  </script>
+  <hr>
+
+  <h1>通过插槽分发内容</h1>
+  <div id="slots-demo" class="demo">
+    <alert-box>
+      Something bad happened.
+    </alert-box>
+  </div>
+  <script>
+    const app7 = Vue.createApp({})
+    // 我们使用 <slot> 作为我们想要插入内容的占位符
+    app7.component('alert-box', {
+      template: `
+        <div class="demo-alert-box">
+          <strong>Error!</strong>
+          <slot></slot>
+        </div>
+      `
+    })
+    app7.mount('#slots-demo')
+  </script>
+  <hr>
+
+
+  <h1>动态组件</h1>
+  <!--// 有的时候，在不同组件之间进行动态切换是非常有用的，比如在一个多标签的界面里：-->
+  <div id="dynamic-component-demo" class="demo">
+    <button
+      v-for="tab in tabs"
+      v-bind:key="tab"
+      v-bind:class="['tab-button', { active: currentTab === tab }]"
+      v-on:click="currentTab = tab"
+    >
+      {{ tab }}
+    </button>
+    <!--可以通过 Vue 的 <component> 元素加一个特殊的 is attribute 来实现：-->
+    <component v-bind:is="currentTabComponent" class="tab"></component>
+  </div>
+  <script>
+    const app8 = Vue.createApp({
+      data() {
+        return {
+          currentTab: 'Home',
+          tabs: ['Home', 'Posts', 'Archive']
+        }
+      },
+      computed: {
+        currentTabComponent() {
+          return 'tab-' + this.currentTab.toLowerCase()
+        }
+      }
+    })
+
+    app8.component('tab-home', {
+      template: `<div class="demo-tab">Home component</div>`
+    })
+    app8.component('tab-posts', {
+      template: `<div class="demo-tab">Posts component</div>`
+    })
+    app8.component('tab-archive', {
+      template: `<div class="demo-tab">Archive component</div>`
+    })
+    app8.mount('#dynamic-component-demo')
+    //在上述示例中，currentTabComponent 可以包括：
+    // 已注册组件的名字，或
+    // 一个组件选项对象
+  </script>
+  <hr>
+
+
+  <div id="dynamic-component-demo-2" class="demo">
+    <button
+      v-for="tab in tabs"
+      :key="tab"
+      :class="['tab-button', { active: currentTab === tab }]"
+      @click="currentTab = tab"
+    >
+      {{ tab.name }}
+    </button>
+
+    <component
+      v-bind:is="currentTab.component"
+    ></component>
+  </div>
+  <script>
+    // 组件选项对象
+    const tabs = [
+      {
+        name: 'Home',
+        component: {
+          template: `<div class="demo-tab">Home component</div>`
+        }
+      },
+      {
+        name: 'Posts',
+        component: {
+          template: `<div class="demo-tab">Posts component</div>`
+        }
+      },
+      {
+        name: 'Archive',
+        component: {
+          template: `<div class="demo-tab">Archive component</div>`
+        }
+      }
+    ]
+
+    const app9 = Vue.createApp({
+      data() {
+        return {
+          tabs,
+          currentTab: tabs[0]
+        }
+      },
+    })
+    app9.mount('#dynamic-component-demo-2')
+  </script>
+
+</body>
+
+<style>
+    .demo {
+        font-family: sans-serif;
+        border: 1px solid #eee;
+        border-radius: 2px;
+        padding: 20px 30px;
+        margin-top: 1em;
+        margin-bottom: 40px;
+        user-select: none;
+        overflow-x: auto;
+    }
+
+    .demo-alert-box {
+        padding: 10px 20px;
+        background: #f3beb8;
+        border: 1px solid #f09898;
+    }
+
+    .tab-button {
+        padding: 6px 10px;
+        border-top-left-radius: 3px;
+        border-top-right-radius: 3px;
+        border: 1px solid #ccc;
+        cursor: pointer;
+        background: #f0f0f0;
+        margin-bottom: -1px;
+        margin-right: -1px;
+    }
+
+    .tab-button:hover {
+        background: #e0e0e0;
+    }
+
+    .tab-button.active {
+        background: #e0e0e0;
+    }
+
+    .demo-tab {
+        border: 1px solid #ccc;
+        padding: 10px;
+    }
+</style>
+</html>

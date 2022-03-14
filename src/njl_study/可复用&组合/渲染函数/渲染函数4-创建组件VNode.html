@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>渲染函数</title>
+  <script src="../../../../node_modules/vue/dist/vue.global.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+  <a href="https://v3.cn.vuejs.org/guide/render-function.html#%E5%88%9B%E5%BB%BA%E7%BB%84%E4%BB%B6-vnode">创建组件 VNode</a>
+  <hr/>
+
+  <div id="app1">
+    <comp2></comp2>
+    <hr>
+    <comp4></comp4>
+
+  </div>
+
+  <script>
+    const { createApp, h, resolveComponent } = Vue
+
+    const app = createApp({})
+
+    // 如果你真的需要重复很多次的元素/组件，你可以使用工厂函数来实现。
+    // 例如，下面这渲染函数用完全合法的方式渲染了 20 个相同的段落：
+    app.component('comp1', {
+      render() {
+        return h('div',
+          Array.from({ length: this.count }).map(() => {
+            return h('p', 'hi')
+          })
+        )
+      },
+      props: {
+        count: {
+          type: Number,
+          required: true
+        }
+      }
+    })
+
+    // 如果我们需要通过名称来解析一个组件，那么我们可以调用 resolveComponent
+    app.component('comp2', {
+      render() {
+        // 使用全局注册的组件comp1
+        return h(resolveComponent('comp1'), { count: 4 })
+      }
+    })
+
+    const component3 = {
+      props: ['x3'],
+      template: `
+        <p>组件{{ x3 }} -
+        <slot></slot>
+        </p>
+      `
+    }
+
+    app.component('comp4', {
+      components: {
+        component3  // 这里不能对component3重命名为comp3，原因暂时不详
+      },
+      render() {
+        // 使用局部注册的组件 component3
+        return h(component3, { x3: "666" }, "hello") // "hello" 会传到 component3 的 slot 标签中
+      }
+    })
+
+    app.mount("#app1")
+  </script>
+</body>
+
+<style>
+
+</style>
+</html>
+
+

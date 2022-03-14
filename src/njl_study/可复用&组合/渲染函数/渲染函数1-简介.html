@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>渲染函数</title>
+  <script src="../../../../node_modules/vue/dist/vue.global.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+  <a href="https://v3.cn.vuejs.org/guide/render-function.html">渲染函数</a>
+  <hr/>
+
+  <div id="app1">
+    <!--锚点标题的使用非常频繁，我们应该创建一个组件：-->
+    <anchored-heading :level="1">Hello world!</anchored-heading>
+  </div>
+
+  <script>
+    // const { createApp } = Vue
+    //
+    // const app = createApp({})
+    //
+    // app.component('anchored-heading', {
+    //   template: `
+    //     <h1 v-if="level === 1">
+    //     <slot></slot>
+    //     </h1>
+    //     <h2 v-else-if="level === 2">
+    //     <slot></slot>
+    //     </h2>
+    //     <h3 v-else-if="level === 3">
+    //     <slot></slot>
+    //     </h3>
+    //     <h4 v-else-if="level === 4">
+    //     <slot></slot>
+    //     </h4>
+    //     <h5 v-else-if="level === 5">
+    //     <slot></slot>
+    //     </h5>
+    //     <h6 v-else-if="level === 6">
+    //     <slot></slot>
+    //     </h6>
+    //   `,
+    //   props: {
+    //     level: {
+    //       type: Number,
+    //       required: true
+    //     }
+    //   }
+    // })
+    // app.mount("#app1")
+    // - - -
+
+    // 我们来尝试使用 render 函数重写上面的例子：
+    const { createApp, h } = Vue
+
+    const app = createApp({})
+
+    app.component('anchored-heading', {
+      render() {
+        return h(
+          'h' + this.level, // 标签名
+          { id: '123', ref: 'xxx' }, // prop 或 attribute
+          this.$slots.default() // 此标签中的内容
+        )
+      },
+      props: {
+        level: {
+          type: Number,
+          required: true
+        }
+      }
+    })
+    app.mount("#app1")
+  </script>
+</body>
+
+
+<style>
+
+</style>
+</html>
+
+

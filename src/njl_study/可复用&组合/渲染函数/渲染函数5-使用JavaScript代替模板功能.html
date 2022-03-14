@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>渲染函数</title>
+  <script src="../../../../node_modules/vue/dist/vue.global.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+  <a
+    href="https://v3.cn.vuejs.org/guide/render-function.html#%E4%BD%BF%E7%94%A8-javascript-%E4%BB%A3%E6%9B%BF%E6%A8%A1%E6%9D%BF%E5%8A%9F%E8%83%BD">
+    使用 JavaScript 代替模板功能</a>
+  <hr/>
+
+  <div id="app1">
+    <comp1 :items="items"></comp1>
+    <hr/>
+
+    <comp3 v-model:model-value-x="modelValueX"></comp3>
+    <p>{{ modelValueX }}</p>
+    <hr/>
+
+    <comp4 v-model:value-x="valueX"></comp4>
+    <p>{{ valueX }}</p>
+    <hr/>
+
+    <h1>插槽</h1>
+    <comp5>{{ v5 }}</comp5>
+  </div>
+
+  <script>
+    const { createApp, h, resolveComponent } = Vue
+
+    const app = createApp({
+      data() {
+        return {
+          items: [
+            { name: '内容001' },
+            { name: '内容002' },
+            { name: '内容003' },
+          ],
+          modelValueX: '123',
+          valueX: '456',
+          v5: 'v5'
+        }
+      }
+    })
+
+    app.component('comp1', {
+      props: ['items'],
+      render() {
+        // 只要在原生的 JavaScript 中可以轻松完成的操作，Vue 的渲染函数就不会提供专有的替代方法。比如，在模板中使用的 v-if 和 v-for
+        // 这些都可以在渲染函数中用 JavaScript 的 if/else 和 map() 来重写：
+        if (this.items.length) {
+          return h('ul', this.items.map((item) => {
+            return h('li', item.name)
+          }))
+        }
+        else {
+          return h('p', 'No items found.')
+        }
+      },
+    })
+    // - - - -
+
+    //v-model 指令扩展为 modelValue 和 onUpdate:modelValue 在模板编译过程中，我们必须自己提供这些 prop：
+    app.component('comp3', {
+      props: ['modelValueX'],
+      emits: ['update:modelValueX'],
+      render() {
+        return h('input', {
+          value: this.modelValueX,
+          'onInput': ($event) => {
+            this.$emit('update:modelValueX', $event.target.value)
+          }
+        })
+      }
+    })
+    // - - - -
+
+    const comp2 = {
+      props: ['x2'],
+      emits: ['update:x2'],
+      template: `
+        <input
+            :value="x2"
+            @input="emitValue"
+        >
+      `,
+      methods: {
+        emitValue(e) {
+          //e = $event
+          let value = e.target.value
+          // this.x2 = value  // x2 是只读的: Attempting to mutate prop "x2". Props are readonly
+          this.$emit('update:x2', value)  // 将修改x2的事件传递到父级
+        }
+      },
+    }
+
+    app.component('comp4', {
+      props: ['valueX'],
+      emits: ['update:valueX'],
+      render() {
+        return h(comp2, {
+          x2: this.valueX,
+          // 绑定子组件修改x2的信号：修改 当前组件的 valueX, 因为子组件comp2中x2的值绑定的是valueX的值
+          'onUpdate:x2': value => this.$emit('update:valueX', value)
+        })
+      }
+    })
+    // - - -
+
+    app.component('comp5', {
+      render() {
+        // `<div><slot></slot></div>`
+        return h('div', {}, this.$slots.default())
+      }
+    })
+
+    const vm1 = app.mount("#app1")
+  </script>
+</body>
+
+<style>
+
+</style>
+</html>
+
+

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Class 与 Style 绑定</title>
+  <script src="../../../node_modules/vue/dist/vue.global.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+  <a href="https://v3.cn.vuejs.org/guide/class-and-style.html">Class 与 Style 绑定</a>
+  <hr/>
+
+  <p>对象语法</p>
+  <div id="c1">
+    <div :class="classObject">1</div>
+  </div>
+  <script>
+    const vm1 = Vue.createApp({
+      data() {
+        return {
+          classObject: {
+            active: true,
+            'text-danger': false
+          }
+        }
+      }
+    }).mount("#c1")
+  </script>
+
+
+  <div id="c2">
+    <div :class="classObject">2</div>
+  </div>
+  <script>
+    const vm2 = Vue.createApp({
+      data() {
+        return {
+          isActive: true,
+          error: null
+        }
+      },
+      computed: {
+        classObject() {
+          return {
+            active: this.isActive && !this.error,
+            'text-danger': this.error && this.error.type === 'fatal'
+          }
+        }
+      }
+    }).mount("#c2")
+  </script>
+  <hr>
+
+
+  <p>数组语法</p>
+  <hr>
+
+
+  <p>在组件上使用</p>
+  <div id="app">
+    <my-component class="baz"></my-component>
+  </div>
+  <script>
+    const app = Vue.createApp({})
+    app.component('my-component', {
+      data() {
+        return {
+          isActive: true,
+          error: null
+        }
+      },
+      computed: {
+        classObject1() {
+          return {
+            active: this.isActive && !this.error,
+            'text-danger': this.error && this.error.type === 'fatal'
+          }
+        }
+      },
+      // 此p标签的渲染结果是 <p class="baz active">Hi!</p>
+      template: `
+        <p :class="[$attrs.class, classObject1]">Hi!</p>
+        <span>This is a child component</span>
+      `
+    }).mount("#app")
+  </script>
+  <hr>
+
+
+  <p>绑定内联样式</p>
+  <div id="app2">
+    <div :style="styleObject">xxx</div>
+  </div>
+  <script>
+    const app2 = Vue.createApp({
+      data() {
+        return {
+          styleObject: {
+            // display: 'none',
+            display: ['-webkit-box', '-ms-flexbox', 'flex'],  // 在chrome浏览器上显示为 flex
+            color: 'red',
+            fontSize: '13px'
+          }
+        }
+      }
+    })
+    app2.mount("#app2")
+
+  </script>
+
+</body>
+</html>
