@@ -11,8 +11,7 @@ docs/_book
 test/
 
 .idea
-
-# mac上的冗余文件
 .DS_Store
-
-/node_modules/
+node_modules/
+dist/
+npm-debug.log
