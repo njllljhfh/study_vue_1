@@ -122,7 +122,7 @@
       { path: '/user/:id', component: User },  // 带参数的动态路由匹配
       { path: '/users/:username/posts/:postId', component: UserPost }, // 多个参数
       { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound },
-    ]
+    ]  // 路由顺序，与列表中的顺序无关
 
     // 3. 创建路由实例并传递 `routes` 配置
     // 你可以在这里输入更多的配置，但我们在这里
