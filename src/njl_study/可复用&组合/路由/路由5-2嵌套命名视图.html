@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>嵌套命名视图</title>
+  <script src="../../../../node_modules/vue/dist/vue.global.js" type="text/javascript" charset="utf-8"></script>
+  <script src="../../../../node_modules/vue-router/dist/vue-router.global.js"></script>
+</head>
+<body>
+  <a href="https://router.vuejs.org/zh/guide/essentials/named-views.html">嵌套命名视图</a>
+  <hr>
+
+  <div id="app">
+    <h1>Nested Named Views</h1>
+    <router-view></router-view>
+  </div>
+
+  <script>
+    const UserSettingsNav = {
+      template: `
+        <div class="us__nav">
+          <router-link to="/settings/emails">emails</router-link>
+          <br />
+          <router-link to="/settings/profile">profile</router-link>
+        </div>
+      `
+    }
+
+    const UserSettings = {
+      components: {
+        UserSettingsNav
+      },
+      template: `
+        <div class="us">
+        <h2>User Settings</h2>
+        <UserSettingsNav></UserSettingsNav>
+        <router-view class="us__content"/>
+        <router-view name="helper" class="us__content us__content--helper"/>
+        </div>
+      `
+    }
+
+    const UserEmailsSubscriptions = {
+      template: `
+        <div>
+          <h3>Email Subscriptions</h3>
+        </div>
+      `
+    }
+
+    const UserProfile = {
+      template: `
+        <div>
+          <h3>Edit your profile</h3>
+        </div>
+      `
+    }
+
+    const UserProfilePreview = {
+      template: `
+        <div>
+          <h3>Preview of your profile</h3>
+        </div>
+      `
+    }
+
+
+    const router = VueRouter.createRouter({
+      history: VueRouter.createWebHistory(),
+      routes: [
+        {
+          path: '/settings',
+          // You could also have named views at tho top
+          component: UserSettings,
+          children: [
+            {
+              path: 'emails',  // /settings/emails
+              component: UserEmailsSubscriptions,
+            },
+            {
+              path: 'profile',  // /settings/profile
+              components: {
+                default: UserProfile,
+                helper: UserProfilePreview,
+              },
+            },
+          ],
+        },
+      ],
+    })
+
+    const app = Vue.createApp({
+      created() {
+        this.$router.push({ path: `/settings` })
+      }
+    })
+    app.use(router)
+    app.mount('#app')
+  </script>
+</body>
+
+
+<style>
+    #app {
+        font-family: Avenir, Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        color: #2c3e50;
+    }
+
+    .router-link-active {
+        color: orange;
+    }
+
+    .router-link-exact-active {
+        color: crimson;
+    }
+
+    .us {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        grid-template-rows: auto;
+        grid-template-areas:
+    "header header"
+    "nav content"
+    "nav helper";
+    }
+
+    h2 {
+        grid-area: header;
+    }
+
+    .us__nav {
+        grid-area: nav;
+        border: 1px dotted;
+        margin-right: 0.75rem;
+        padding: 0.3rem;
+    }
+
+    .us__content {
+        grid-area: content;
+    }
+
+    .us__content--helper {
+        grid-area: helper;
+    }
+</style>
+
+<style scoped>
+    ul {
+        display: flex;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    li:not(:last-of-type) {
+        margin-right: 1rem;
+    }
+</style>
+</html>

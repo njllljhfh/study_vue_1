@@ -33,7 +33,7 @@
         list[index] = new Date().toLocaleString() + '---xxxx'
         console.log('divs.value =', divs.value)
         // console.log('span.innerHTML =', divs.value[0].getElementsByTagName('span')[0].innerHTML)
-        console.log('spans 中的内容 =', spans.value[index].innerHTML) // 这里获取到的是更新前的内容
+        console.log('spans 中的内容 =', spans.value[index].innerHTML) // 这里获取到的是更新后的内容
       }
 
       return {

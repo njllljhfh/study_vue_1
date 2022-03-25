@@ -32,8 +32,8 @@
       `
     }
     const UserHome = { template: `<div>Home: {{ $route.path }}</div>` }
-    const UserPosts = { template: `<div>Posts: {{ $route.path }}</div>` }
     const UserProfile = { template: `<div>Profile: {{ $route.path }}</div>` }
+    const UserPosts = { template: `<div>Posts: {{ $route.path }}</div>` }
 
     const routes = [
       {
@@ -69,9 +69,8 @@
     app.use(router)
     app.mount('#app')
   </script>
-
-
 </body>
+
 <style>
 </style>
 </html>
